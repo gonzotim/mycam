@@ -111,6 +111,9 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
 
                 if let previewLayer = self.previewLayer{
                     previewLayer.frame = CGRectMake(0, 0, 200, 200)
+                    previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+
+
                     self.previewView.layer.addSublayer(previewLayer)
                 } else {
                     print("no preview layer")

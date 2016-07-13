@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -18,9 +17,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MH7-ib-rEi">
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MH7-ib-rEi">
                                 <rect key="frame" x="66" y="219" width="188" height="96"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="Yns-RR-LoH"/>
+                                    <constraint firstAttribute="height" constant="200" id="ooU-Fl-bA5"/>
+                                </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y7P-V9-6em">
                                 <rect key="frame" x="136" y="461" width="49" height="21"/>
@@ -32,10 +35,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="MH7-ib-rEi" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="199" id="LMb-KT-sCm"/>
-                            <constraint firstItem="MH7-ib-rEi" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="50" id="Ymv-lP-2a9"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="MH7-ib-rEi" secondAttribute="bottom" constant="253" id="Z78-fN-KLK"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="MH7-ib-rEi" secondAttribute="trailing" constant="50" id="gl6-n1-FHb"/>
+                            <constraint firstItem="MH7-ib-rEi" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DQR-HV-rFp"/>
+                            <constraint firstItem="MH7-ib-rEi" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="XNh-4G-0ux"/>
                         </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
