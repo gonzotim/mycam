@@ -17,8 +17,6 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var recordButton: UIButton!
 
-
-
     var movieFileOutput: AVCaptureMovieFileOutput?
     var sessionQueue: dispatch_queue_t!
     var backgroundRecordId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
@@ -128,118 +126,18 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
 
         }
 
+        // Add output to session
         let movieFileOutput: AVCaptureMovieFileOutput = AVCaptureMovieFileOutput()
-
-
-
 
         if session.canAddOutput(movieFileOutput){
             session.addOutput(movieFileOutput)
-
-//            var pixelBufferOptions: [NSObject : AnyObject] = [
-//                (kCVPixelBufferWidthKey as! AnyObject) as! NSObject : Int(200),
-//                (kCVPixelBufferHeightKey as! AnyObject) as! NSObject : Int(200),
-//                (kCVPixelBufferPixelFormatTypeKey as! AnyObject) as! NSObject : Int(kCVPixelFormatType_32BGRA)
-//            ]
-//
-//            session.video
-
-                //.videoSettings = pixelBufferOptions
-
-
-//            var output: AVCaptureVideoDataOutput = AVCaptureVideoDataOutput()
-//            session.addOutput(output)
-//            output.videoM
-//            minFrameDuration = CMTimeMake(1, 15)
-
-
-//            var aMovieFileOutput: AVCaptureMovieFileOutput = AVCaptureMovieFileOutput()
-//            aMovieFileOutput.setD
-//            minFrameDuration = CMTimeMake(1, 15)
-
-//
-//            let connection: AVCaptureConnection? = movieFileOutput.connectionWithMediaType(AVMediaTypeVideo)
-//            let stab = connection?.supportsVideoStabilization
-//            if (stab != nil) {
-//                connection!.enablesVideoStabilizationWhenAvailable = true
-//            }
-//
             self.movieFileOutput = movieFileOutput
-//            print("output added")
-
         } else {
             print("didn't add output")
         }
 
 
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
-//    func updateDeviceSettings(focusValue : Float, isoValue : Float) {
-////        if let device = captureDevice {
-////            if(device.lockForConfiguration(nil)) {
-////                device.setFocusModeLockedWithLensPosition(focusValue, completionHandler: { (time) -> Void in
-////                    //
-////                })
-////
-////                // Adjust the iso to clamp between minIso and maxIso based on the active format
-////                let minISO = device.activeFormat.minISO
-////                let maxISO = device.activeFormat.maxISO
-////                let clampedISO = isoValue * (maxISO - minISO) + minISO
-////
-////                device.setExposureModeCustomWithDuration(AVCaptureExposureDurationCurrent, ISO: clampedISO, completionHandler: { (time) -> Void in
-////                    //
-////                })
-////
-////                device.unlockForConfiguration()
-////            }
-////        }
-//    }
-
-
-//    var videoComposition: AVVideoComposition {
-//        //---------------
-//        //  composition
-//        //---------------
-//        let composition = AVMutableVideoComposition()
-//        composition.renderSize = NSMakeSize( 720, 480 )  // fixed size in this example
-//        composition.frameDuration = self.asset.duration
-//
-//        //---------------
-//        //  instruction
-//        //---------------
-//        let instruction = AVMutableVideoCompositionInstruction()
-//        instruction.timeRange = CMTimeRangeMake( kCMTimeZero, self.asset.duration )
-//
-//        //-------------------------
-//        //  transform instruction
-//        //-------------------------
-//        let videoTracks = self.asset.tracksWithMediaType( AVMediaTypeVideo )
-//        let assetTrack = videoTracks[0]
-//        let layerInstruction = AVMutableVideoCompositionLayerInstruction( assetTrack: assetTrack )
-//
-//        let transform = CGAffineTransformMake( 1.5,  // fixed transform in this example
-//            0.0,
-//            0.0,
-//            2.0,
-//            -100.0,
-//            -100.0 )
-//
-//        layerInstruction.setTransformRampFromStartTransform( transform,
-//                                                             toEndTransform: transform,
-//                                                             timeRange: CMTimeRangeMake( kCMTimeZero, self.asset.duration ) )
-//        
-//        instruction.layerInstructions = [ layerInstruction ]
-//        composition.instructions = [ instruction ]
-//        
-//        return composition
-//    }
-
 
     func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
         var filename = "CroppedVideo23"
