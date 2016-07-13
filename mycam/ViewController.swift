@@ -39,6 +39,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
 //                self.movieFileOutput!.connectionWithMediaType(AVMediaTypeVideo).videoOrientation =
 //                    AVCaptureVideoOrientation(rawValue: (self.previewView.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation.rawValue )!
 //
+
+
 //                // Turning OFF flash for video recording
 //                //ViewController.setFlashMode(AVCaptureFlashMode.Off, device: self.videoDeviceInput!.device)
 //
@@ -85,6 +87,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
 
         // Set the input
         var device: AVCaptureDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+
+
         var error: NSError? = nil
 
         var videoDeviceInput: AVCaptureDeviceInput?
@@ -96,6 +100,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         } catch {
             fatalError()
         }
+
 
         if session.canAddInput(videoDeviceInput){
             session.addInput(videoDeviceInput)
@@ -124,8 +129,22 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
 
         let movieFileOutput: AVCaptureMovieFileOutput = AVCaptureMovieFileOutput()
+
+
+
+
         if session.canAddOutput(movieFileOutput){
             session.addOutput(movieFileOutput)
+
+//            var pixelBufferOptions: [NSObject : AnyObject] = [
+//                (kCVPixelBufferWidthKey as! AnyObject) as! NSObject : Int(200),
+//                (kCVPixelBufferHeightKey as! AnyObject) as! NSObject : Int(200),
+//                (kCVPixelBufferPixelFormatTypeKey as! AnyObject) as! NSObject : Int(kCVPixelFormatType_32BGRA)
+//            ]
+//
+//            session.video
+
+                //.videoSettings = pixelBufferOptions
 
 
 //            var output: AVCaptureVideoDataOutput = AVCaptureVideoDataOutput()
@@ -160,41 +179,196 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+
+//    func updateDeviceSettings(focusValue : Float, isoValue : Float) {
+////        if let device = captureDevice {
+////            if(device.lockForConfiguration(nil)) {
+////                device.setFocusModeLockedWithLensPosition(focusValue, completionHandler: { (time) -> Void in
+////                    //
+////                })
+////
+////                // Adjust the iso to clamp between minIso and maxIso based on the active format
+////                let minISO = device.activeFormat.minISO
+////                let maxISO = device.activeFormat.maxISO
+////                let clampedISO = isoValue * (maxISO - minISO) + minISO
+////
+////                device.setExposureModeCustomWithDuration(AVCaptureExposureDurationCurrent, ISO: clampedISO, completionHandler: { (time) -> Void in
+////                    //
+////                })
+////
+////                device.unlockForConfiguration()
+////            }
+////        }
+//    }
+
+
+//    var videoComposition: AVVideoComposition {
+//        //---------------
+//        //  composition
+//        //---------------
+//        let composition = AVMutableVideoComposition()
+//        composition.renderSize = NSMakeSize( 720, 480 )  // fixed size in this example
+//        composition.frameDuration = self.asset.duration
+//
+//        //---------------
+//        //  instruction
+//        //---------------
+//        let instruction = AVMutableVideoCompositionInstruction()
+//        instruction.timeRange = CMTimeRangeMake( kCMTimeZero, self.asset.duration )
+//
+//        //-------------------------
+//        //  transform instruction
+//        //-------------------------
+//        let videoTracks = self.asset.tracksWithMediaType( AVMediaTypeVideo )
+//        let assetTrack = videoTracks[0]
+//        let layerInstruction = AVMutableVideoCompositionLayerInstruction( assetTrack: assetTrack )
+//
+//        let transform = CGAffineTransformMake( 1.5,  // fixed transform in this example
+//            0.0,
+//            0.0,
+//            2.0,
+//            -100.0,
+//            -100.0 )
+//
+//        layerInstruction.setTransformRampFromStartTransform( transform,
+//                                                             toEndTransform: transform,
+//                                                             timeRange: CMTimeRangeMake( kCMTimeZero, self.asset.duration ) )
+//        
+//        instruction.layerInstructions = [ layerInstruction ]
+//        composition.instructions = [ instruction ]
+//        
+//        return composition
+//    }
+
+
     func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
+        var filename = "CroppedVideo23"
+        //let croppedVideoPath =  "crop3.mp4"
 
-        if(error != nil){
-            print(error)
-        }
 
-        print("hello from delegate")
+        let croppedVideoPath : String = String(format: "%@%@", NSTemporaryDirectory(), "output3.mov")
 
-        //self.lockInterfaceRotation = false
 
-        // Note the backgroundRecordingID for use in the ALAssetsLibrary completion handler to end the background task associated with this recording. This allows a new recording to be started, associated with a new UIBackgroundTaskIdentifier, once the movie file output's -isRecording is back to NO — which happens sometime after this method returns.
+        //var asset : AVAsset = AVAsset.assetWithURL(outputFileURL) as AVAsset
+        let asset : AVURLAsset = AVURLAsset(URL: outputFileURL, options: nil)
 
-        let backgroundRecordId: UIBackgroundTaskIdentifier = self.backgroundRecordId
-        self.backgroundRecordId = UIBackgroundTaskInvalid
+        var composition : AVMutableComposition = AVMutableComposition()
+        composition.addMutableTrackWithMediaType(AVMediaTypeVideo, preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
 
-        ALAssetsLibrary().writeVideoAtPathToSavedPhotosAlbum(outputFileURL, completionBlock: {
-            (assetURL:NSURL!, error:NSError!) in
-            if error != nil{
-                print(error)
+        var clipVideoTrack : AVAssetTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
 
-            }
+        var videoComposition: AVMutableVideoComposition = AVMutableVideoComposition()
+        videoComposition.frameDuration = CMTimeMake(1, 60)
+        videoComposition.renderSize = CGSizeMake(clipVideoTrack.naturalSize.height, clipVideoTrack.naturalSize.height)
 
-            do {
-                try NSFileManager.defaultManager().removeItemAtURL(outputFileURL)
-            } catch _ {
-            }
+        var instruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
+        instruction.timeRange = CMTimeRangeMake(kCMTimeZero, CMTimeMakeWithSeconds(60, 30))
 
-            if backgroundRecordId != UIBackgroundTaskInvalid {
-                UIApplication.sharedApplication().endBackgroundTask(backgroundRecordId)
+
+        var transformer: AVMutableVideoCompositionLayerInstruction =
+            AVMutableVideoCompositionLayerInstruction(assetTrack: clipVideoTrack)
+
+
+        var t1: CGAffineTransform = CGAffineTransformMakeTranslation(clipVideoTrack.naturalSize.height, -(clipVideoTrack.naturalSize.width - clipVideoTrack.naturalSize.height)/2 )
+        var t2: CGAffineTransform = CGAffineTransformRotate(t1, CGFloat(M_PI_2))
+
+        var finalTransform: CGAffineTransform = t2
+
+        transformer.setTransform(finalTransform, atTime: kCMTimeZero)
+
+        instruction.layerInstructions = NSArray(object: transformer) as! [AVVideoCompositionLayerInstruction]
+        videoComposition.instructions = NSArray(object: instruction) as! [AVVideoCompositionInstructionProtocol]
+
+
+        var exporter = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality)
+        exporter!.videoComposition = videoComposition
+        exporter!.outputFileType = AVFileTypeQuickTimeMovie
+        exporter!.outputURL = NSURL(fileURLWithPath: croppedVideoPath)
+
+        exporter!.exportAsynchronouslyWithCompletionHandler({ () -> Void in
+
+            dispatch_async(dispatch_get_main_queue()) {
+                () -> Void in
+                let outputURL:NSURL = exporter!.outputURL!;
+                //self.videoURL = outputURL
+                let asset:AVURLAsset = AVURLAsset(URL: outputURL, options: nil)
+                print(outputURL)
+
+                let backgroundRecordId: UIBackgroundTaskIdentifier = self.backgroundRecordId
+                self.backgroundRecordId = UIBackgroundTaskInvalid
+        
+                ALAssetsLibrary().writeVideoAtPathToSavedPhotosAlbum(outputURL, completionBlock: {
+                    (assetURL:NSURL!, error:NSError!) in
+                    if error != nil{
+                        print(error)
+        
+                    }
+        
+                    do {
+                        try NSFileManager.defaultManager().removeItemAtURL(outputFileURL)
+                    } catch _ {
+                    }
+        
+                    if backgroundRecordId != UIBackgroundTaskInvalid {
+                        UIApplication.sharedApplication().endBackgroundTask(backgroundRecordId)
+                    }
+        
+                })
+
+
             }
 
         })
 
 
+        //        exporter!.exportAsynchronouslyWithCompletionHandler({
+        //
+        //            //display video after export is complete, for example...
+        //            let outputURL:NSURL = exporter!.outputURL!;
+        //            print("Cropped video saved at \(outputURL)")
+        //            //self.saveVideoEvent()
+        //
+        //        })
     }
+
+
+
+
+//    func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
+//
+//        if(error != nil){
+//            print(error)
+//        }
+//
+//        print("hello from delegate")
+//
+//        //self.lockInterfaceRotation = false
+//
+//        // Note the backgroundRecordingID for use in the ALAssetsLibrary completion handler to end the background task associated with this recording. This allows a new recording to be started, associated with a new UIBackgroundTaskIdentifier, once the movie file output's -isRecording is back to NO — which happens sometime after this method returns.
+//
+//        let backgroundRecordId: UIBackgroundTaskIdentifier = self.backgroundRecordId
+//        self.backgroundRecordId = UIBackgroundTaskInvalid
+//
+//        ALAssetsLibrary().writeVideoAtPathToSavedPhotosAlbum(outputFileURL, completionBlock: {
+//            (assetURL:NSURL!, error:NSError!) in
+//            if error != nil{
+//                print(error)
+//
+//            }
+//
+//            do {
+//                try NSFileManager.defaultManager().removeItemAtURL(outputFileURL)
+//            } catch _ {
+//            }
+//
+//            if backgroundRecordId != UIBackgroundTaskInvalid {
+//                UIApplication.sharedApplication().endBackgroundTask(backgroundRecordId)
+//            }
+//
+//        })
+//
+//
+//    }
 
 
 }
