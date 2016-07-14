@@ -11,10 +11,44 @@ import AVFoundation
 import AssetsLibrary
 
 
+class Clip {
+
+    static var clips = Array<Clip>()
+    var tempImageUrl:String!
+}
+
+class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
+
+    @IBOutlet weak var collectionView: UICollectionView!
+
+    let things = ["1", "2"]
+    var movieFileOutput: AVCaptureMovieFileOutput?
+    var sessionQueue: dispatch_queue_t!
+    var backgroundRecordId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
+
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCell
+
+        cell.cellTititle.text = self.things[indexPath.row]
+
+        return cell
+    }
+
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.things.count
+    }
+
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let alertController = UIAlertController(title: "iOScreator", message:
+            "Hello, world!", preferredStyle: UIAlertControllerStyle.Alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
 
 
-class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
-
+    
     @IBAction func pressRecordButton(sender: AnyObject) {
         print("press")
         self.view.backgroundColor = UIColor.redColor()
@@ -75,9 +109,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var recordButton: UIButton!
 
-    var movieFileOutput: AVCaptureMovieFileOutput?
-    var sessionQueue: dispatch_queue_t!
-    var backgroundRecordId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
+
 
 
     @IBAction func recordButtionAction(sender: AnyObject) {
