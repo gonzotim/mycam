@@ -29,7 +29,9 @@
                                 <rect key="frame" x="136" y="461" width="49" height="21"/>
                                 <state key="normal" title="Record"/>
                                 <connections>
+                                    <action selector="pressRecordButton:" destination="BYZ-38-t0r" eventType="touchDown" id="l6A-pM-T2c"/>
                                     <action selector="recordButtionAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iVq-di-rch"/>
+                                    <action selector="releaseRecordButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yvk-B8-Bfo"/>
                                 </connections>
                             </button>
                         </subviews>

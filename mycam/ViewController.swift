@@ -12,7 +12,65 @@ import AssetsLibrary
 
 
 
+
 class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
+
+    @IBAction func pressRecordButton(sender: AnyObject) {
+        print("press")
+        self.view.backgroundColor = UIColor.redColor()
+
+        dispatch_async(self.sessionQueue, {
+            if !self.movieFileOutput!.recording{
+                print("start recording")
+
+                //                //self.lockInterfaceRotation = true
+                //
+                ////                if UIDevice.currentDevice().multitaskingSupported {
+                ////                    self.backgroundRecordId = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler({})
+                ////
+                ////                }
+                //
+                //                self.movieFileOutput!.connectionWithMediaType(AVMediaTypeVideo).videoOrientation =
+                //                    AVCaptureVideoOrientation(rawValue: (self.previewView.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation.rawValue )!
+                //
+
+
+                //                // Turning OFF flash for video recording
+                //                //ViewController.setFlashMode(AVCaptureFlashMode.Off, device: self.videoDeviceInput!.device)
+                //
+
+                //if let timestamp = NSDate().timeIntervalSince1970 as? String {
+                    let timestamp = String(NSDate().timeIntervalSince1970)
+                    let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("\(timestamp)movie153.mov")
+                    print("outputFilePath is \(outputFilePath)")
+                    self.movieFileOutput!.startRecordingToOutputFileURL( outputFilePath, recordingDelegate: self)
+//                } else {
+//                    print("nope")
+//                }
+                // let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("movie153.mov")
+                //
+                //                //NSTemporaryDirectory().stringByAppendingPathComponent( "movie".stringByAppendingPathExtension("mov")!)
+                //
+
+                //
+                //
+            }else{
+                //print("stop recording")
+                //self.movieFileOutput!.stopRecording()
+            }
+        })
+
+    }
+
+    @IBAction func releaseRecordButton(sender: AnyObject) {
+        print("release")
+        self.view.backgroundColor = UIColor.whiteColor()
+
+        if self.movieFileOutput!.recording{
+            print("stop recording")
+            self.movieFileOutput!.stopRecording()
+        }
+    }
 
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var recordButton: UIButton!
@@ -24,36 +82,36 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
 
     @IBAction func recordButtionAction(sender: AnyObject) {
 
-        dispatch_async(self.sessionQueue, {
-            if !self.movieFileOutput!.recording{
-                print("start recording")
-//                //self.lockInterfaceRotation = true
-//
-////                if UIDevice.currentDevice().multitaskingSupported {
-////                    self.backgroundRecordId = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler({})
+//        dispatch_async(self.sessionQueue, {
+//            if !self.movieFileOutput!.recording{
+//                print("start recording")
+////                //self.lockInterfaceRotation = true
 ////
-////                }
-//
-//                self.movieFileOutput!.connectionWithMediaType(AVMediaTypeVideo).videoOrientation =
-//                    AVCaptureVideoOrientation(rawValue: (self.previewView.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation.rawValue )!
-//
-
-
-//                // Turning OFF flash for video recording
-//                //ViewController.setFlashMode(AVCaptureFlashMode.Off, device: self.videoDeviceInput!.device)
-//
-               let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("movie.mov")
-//
-//                //NSTemporaryDirectory().stringByAppendingPathComponent( "movie".stringByAppendingPathExtension("mov")!)
-//
-                self.movieFileOutput!.startRecordingToOutputFileURL( outputFilePath, recordingDelegate: self)
+//////                if UIDevice.currentDevice().multitaskingSupported {
+//////                    self.backgroundRecordId = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler({})
+//////
+//////                }
+////
+////                self.movieFileOutput!.connectionWithMediaType(AVMediaTypeVideo).videoOrientation =
+////                    AVCaptureVideoOrientation(rawValue: (self.previewView.layer as! AVCaptureVideoPreviewLayer).connection.videoOrientation.rawValue )!
+////
 //
 //
-            }else{
-                print("stop recording")
-                self.movieFileOutput!.stopRecording()
-            }
-        })
+////                // Turning OFF flash for video recording
+////                //ViewController.setFlashMode(AVCaptureFlashMode.Off, device: self.videoDeviceInput!.device)
+////
+//               let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("movie.mov")
+////
+////                //NSTemporaryDirectory().stringByAppendingPathComponent( "movie".stringByAppendingPathExtension("mov")!)
+////
+//                self.movieFileOutput!.startRecordingToOutputFileURL( outputFilePath, recordingDelegate: self)
+////
+////
+//            }else{
+//                print("stop recording")
+//                self.movieFileOutput!.stopRecording()
+//            }
+//        })
 
 
 
@@ -66,6 +124,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        //self.view.backgroundColor = UIColor.redColor()
 
         let sessionQueue: dispatch_queue_t = dispatch_queue_create("session queue",DISPATCH_QUEUE_SERIAL)
         self.sessionQueue = sessionQueue
@@ -140,11 +200,15 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     }
 
     func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
-        var filename = "CroppedVideo23"
+
+        print("url is \(outputFileURL)")
+        var filename = "CroppedVideo2345"
         //let croppedVideoPath =  "crop3.mp4"
 
+        let timestamp = String(NSDate().timeIntervalSince1970)
+        //let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("\(timestamp)movie153.mov")
 
-        let croppedVideoPath : String = String(format: "%@%@", NSTemporaryDirectory(), "output3.mov")
+        let croppedVideoPath : String = String(format: "%@%@", NSTemporaryDirectory(), "output4\(timestamp).mov")
 
 
         //var asset : AVAsset = AVAsset.assetWithURL(outputFileURL) as AVAsset
