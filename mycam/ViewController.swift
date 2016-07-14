@@ -14,7 +14,14 @@ import AssetsLibrary
 class Clip {
 
     static var clips = Array<Clip>()
-    var tempImageUrl:String!
+    var previewPath:String!
+//    //var tempImageUrl:String!
+//    var imageData: uiImage!
+//
+    init (previewPath: String) {
+        self.previewPath = previewPath
+    }
+
 }
 
 class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
@@ -29,14 +36,19 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
 
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCell
+        let previewPath = Clip.clips[indexPath.row].previewPath
+        let preview = UIImage(contentsOfFile: previewPath)
 
-        cell.cellTititle.text = self.things[indexPath.row]
+            //.imageWithContentsOfFile(previewPath)!
+
+
+        cell.cellImage.image = preview
 
         return cell
     }
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.things.count
+        return Clip.clips.count
     }
 
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
@@ -231,6 +243,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
 
     }
 
+    // https://gist.github.com/franklinho/b43cc2c6c0c3ecd6a9d0
+
     func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
 
         print("url is \(outputFileURL)")
@@ -245,6 +259,76 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
 
         //var asset : AVAsset = AVAsset.assetWithURL(outputFileURL) as AVAsset
         let asset : AVURLAsset = AVURLAsset(URL: outputFileURL, options: nil)
+
+
+        // Make a thumbnail
+
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+
+
+        let time = CMTimeMakeWithSeconds(0.5, 1000)
+        var actualTime = kCMTimeZero
+        var thumbnail : CGImageRef?
+        do {
+            thumbnail = try imageGenerator.copyCGImageAtTime(time, actualTime: &actualTime)
+        }
+        catch let error as NSError {
+            print(error.localizedDescription)
+        }
+
+        let uiImage = UIImage(CGImage: thumbnail!)
+        let imageData: NSData = UIImageJPEGRepresentation(uiImage, 0.8)!
+
+
+        let imagePreviewPath : String = String(format: "%@%@", NSTemporaryDirectory(), "output4\(timestamp).mov")
+        imageData.writeToFile(imagePreviewPath, atomically: true)
+
+        let clip = Clip(previewPath: imagePreviewPath)
+        Clip.clips.append(clip)
+
+        collectionView.reloadData()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         var composition : AVMutableComposition = AVMutableComposition()
         composition.addMutableTrackWithMediaType(AVMediaTypeVideo, preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
