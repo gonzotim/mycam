@@ -124,26 +124,30 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
     }
 
     @IBAction func pressRecordButton(sender: AnyObject) {
-        self.view.backgroundColor = UIColor.redColor()
 
+        // Check to see if total clip durtion is under 9s
         Clip.updateClipDuration()
+        if Clip.totalDuration < Float64(9){
+            self.view.backgroundColor = UIColor.redColor()
+            if (!timer.valid) {
+                let aSelector : Selector = "updateCountDown"
+                timer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: aSelector, userInfo: nil, repeats: true)
+                startTime = NSDate.timeIntervalSinceReferenceDate()
+            }
 
-        if (!timer.valid) {
-            let aSelector : Selector = "updateCountDown"
-            timer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: aSelector, userInfo: nil, repeats: true)
-            startTime = NSDate.timeIntervalSinceReferenceDate()
+
+            dispatch_async(self.sessionQueue, {
+                if !self.movieFileOutput!.recording{
+                    print("start recording")
+                    let timestamp = String(NSDate().timeIntervalSince1970)
+                    let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("\(timestamp)clip.mov")
+                    print("outputFilePath is \(outputFilePath)")
+                    self.movieFileOutput!.startRecordingToOutputFileURL( outputFilePath, recordingDelegate: self)
+                }
+            })
         }
 
 
-        dispatch_async(self.sessionQueue, {
-            if !self.movieFileOutput!.recording{
-                print("start recording")
-                let timestamp = String(NSDate().timeIntervalSince1970)
-                let outputFilePath = NSURL(fileURLWithPath: NSTemporaryDirectory()).URLByAppendingPathComponent("\(timestamp)clip.mov")
-                print("outputFilePath is \(outputFilePath)")
-                self.movieFileOutput!.startRecordingToOutputFileURL( outputFilePath, recordingDelegate: self)
-            }
-        })
 
     }
 
@@ -156,7 +160,6 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
             self.movieFileOutput!.stopRecording()
         }
     }
-
 
     @IBAction func exportButton(sender: AnyObject) {
 
@@ -177,9 +180,20 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
             // Make our video composition track
             var videoAssetTrack: AVAssetTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0]
 
+            var clipRange: CMTimeRange = CMTimeRangeMake(kCMTimeZero, kCMTimeZero)
+
+            // check that the total duration wont be over 9s
+            // if it it limit the range of the track to max  sure maximum expoted clip won't exceed 9s
+            if CMTimeGetSeconds(time + videoAssetTrack.timeRange.duration) > 2{
+                clipRange = CMTimeRangeMake(kCMTimeZero, (CMTimeMakeWithSeconds(9, 600) - videoAssetTrack.timeRange.duration))
+            } else {
+                print("track time is less than 2s")
+                clipRange = CMTimeRangeMake(kCMTimeZero, videoAssetTrack.timeRange.duration)
+            }
+
             // Add the AVAssetTrack to the AVVideoComposition
             do {
-                try videoCompositionTrack.insertTimeRange(CMTimeRangeMake(kCMTimeZero, videoAssetTrack.timeRange.duration), ofTrack: videoAssetTrack, atTime: time)
+                try videoCompositionTrack.insertTimeRange(clipRange, ofTrack: videoAssetTrack, atTime: time)
             }
             catch let error as NSError {
                 print("There was an error")
@@ -246,6 +260,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cell", forIndexPath: indexPath) as! CollectionViewCell
         let previewPath = Clip.clips[indexPath.row].previewPath
         let preview = UIImage(contentsOfFile: previewPath)
+        let duration = Double(round(Clip.clips[indexPath.row].duration*10)/10)
+        cell.cellTititle.text = "\(duration)s"
         cell.cellImage.image = preview
         return cell
     }
