@@ -15,12 +15,22 @@ import CoreMedia
 class Clip {
 
     static var clips = Array<Clip>()
+    static var totalDuration:Float64 = 0
     var previewPath:String!
     var croppedVideoPath:String!
+    var duration:Float64
 
-    init (previewPath: String, croppedVideoPath: String ) {
+    init (previewPath: String, croppedVideoPath: String, duration: Float64 ) {
         self.previewPath = previewPath
         self.croppedVideoPath = croppedVideoPath
+        self.duration = duration
+    }
+
+    static func updateClipDuration(){
+        Clip.totalDuration = 0
+        for clip in Clip.clips{
+            Clip.totalDuration = Clip.totalDuration + clip.duration
+        }
     }
 
 }
@@ -32,13 +42,19 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
     var backgroundRecordId: UIBackgroundTaskIdentifier = UIBackgroundTaskInvalid
     var session: AVCaptureSession?
     var previewLayer: AVCaptureVideoPreviewLayer?
+    var timer:NSTimer = NSTimer()
+    var startTime = NSTimeInterval()
 
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var recordButton: UIButton!
+    @IBOutlet weak var countDown: UIProgressView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        countDown.progress = 0
+
         let sessionQueue: dispatch_queue_t = dispatch_queue_create("session queue",DISPATCH_QUEUE_SERIAL)
         self.sessionQueue = sessionQueue
 
@@ -98,9 +114,26 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
         }
     }
 
+    // update the countDown progress bar UI
+    func updateCountDown(){
+        let maxTime:Float64 = 9
+        let currentTime = NSDate.timeIntervalSinceReferenceDate()
+        var elapsedTime: NSTimeInterval = currentTime - startTime
+        let agregateDuration = Float64(elapsedTime) + Clip.totalDuration
+        countDown.progress = Float(agregateDuration / maxTime)
+    }
 
     @IBAction func pressRecordButton(sender: AnyObject) {
         self.view.backgroundColor = UIColor.redColor()
+
+        Clip.updateClipDuration()
+
+        if (!timer.valid) {
+            let aSelector : Selector = "updateCountDown"
+            timer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: aSelector, userInfo: nil, repeats: true)
+            startTime = NSDate.timeIntervalSinceReferenceDate()
+        }
+
 
         dispatch_async(self.sessionQueue, {
             if !self.movieFileOutput!.recording{
@@ -114,9 +147,10 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
 
     }
 
-
     @IBAction func releaseRecordButton(sender: AnyObject) {
         self.view.backgroundColor = UIColor.whiteColor()
+        timer.invalidate()
+
         if self.movieFileOutput!.recording{
             print("stop recording")
             self.movieFileOutput!.stopRecording()
@@ -289,7 +323,6 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
                 let imageGenerator = AVAssetImageGenerator(asset: asset)
                 imageGenerator.appliesPreferredTrackTransform = true
 
-
                 let time = CMTimeMakeWithSeconds(0.5, 1000)
                 var actualTime = kCMTimeZero
                 var thumbnail : CGImageRef?
@@ -307,8 +340,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
                 let imagePreviewPath : String = String(format: "%@%@", NSTemporaryDirectory(), "output4\(timestamp).jpg")
                 imageData.writeToFile(imagePreviewPath, atomically: true)
 
-                let clip = Clip(previewPath: imagePreviewPath, croppedVideoPath: croppedVideoPath)
+                print(asset.duration)
+                print("seconds = \(CMTimeGetSeconds(asset.duration))")
+                let clipDuration = CMTimeGetSeconds(asset.duration)
+                let clip = Clip(previewPath: imagePreviewPath, croppedVideoPath: croppedVideoPath, duration: clipDuration)
                 Clip.clips.append(clip)
+                Clip.updateClipDuration()
+                print("Clip.totalDuration is \(Clip.totalDuration)")
                 
                 self.collectionView.reloadData()
 

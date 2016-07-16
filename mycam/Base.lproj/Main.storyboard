@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -17,24 +18,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MH7-ib-rEi">
-                                <rect key="frame" x="66" y="219" width="188" height="96"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MH7-ib-rEi">
+                                <rect key="frame" x="10" y="134" width="300" height="300"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="Yns-RR-LoH"/>
-                                    <constraint firstAttribute="height" constant="200" id="ooU-Fl-bA5"/>
+                                    <constraint firstAttribute="width" constant="300" id="Yns-RR-LoH"/>
+                                    <constraint firstAttribute="height" constant="300" id="ooU-Fl-bA5"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y7P-V9-6em">
-                                <rect key="frame" x="136" y="461" width="49" height="21"/>
-                                <state key="normal" title="Record"/>
-                                <connections>
-                                    <action selector="pressRecordButton:" destination="BYZ-38-t0r" eventType="touchDown" id="l6A-pM-T2c"/>
-                                    <action selector="releaseRecordButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yvk-B8-Bfo"/>
-                                </connections>
-                            </button>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="AeD-WO-Yox">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="186"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="AeD-WO-Yox">
+                                <rect key="frame" x="160" y="10" width="0.0" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="Vel-01-gf5"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="upW-B1-9c0">
                                     <size key="itemSize" width="50" height="50"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -43,17 +39,18 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="s5L-fI-bXP" customClass="CollectionViewCell" customModule="mycam" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="10" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mbo-OP-pS9">
-                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mbo-OP-pS9">
+                                                    <rect key="frame" x="18" y="18" width="14" height="70"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="70" id="9ak-lT-2lp"/>
+                                                    </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JPJ-Xm-ffv">
-                                                    <rect key="frame" x="29" y="39" width="42" height="21"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="42" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -72,30 +69,53 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Fqw-zO-Yve"/>
                                 </connections>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kh-4P-USa">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kh-4P-USa">
                                 <rect key="frame" x="137" y="506" width="45" height="30"/>
                                 <state key="normal" title="export"/>
                                 <connections>
                                     <action selector="exportButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Io9-ze-3ZJ"/>
                                 </connections>
                             </button>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="H74-mW-E1w">
+                                <rect key="frame" x="36" y="30" width="248" height="2"/>
+                            </progressView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y7P-V9-6em">
+                                <rect key="frame" x="136" y="459" width="49" height="30"/>
+                                <state key="normal" title="Record"/>
+                                <connections>
+                                    <action selector="pressRecordButton:" destination="BYZ-38-t0r" eventType="touchDown" id="l6A-pM-T2c"/>
+                                    <action selector="releaseRecordButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yvk-B8-Bfo"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="7kh-4P-USa" secondAttribute="bottom" constant="32" id="2Md-P3-ZID"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="AeD-WO-Yox" secondAttribute="trailing" constant="10" id="4P8-z8-neb"/>
+                            <constraint firstItem="Y7P-V9-6em" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ARZ-au-LEd"/>
+                            <constraint firstItem="7kh-4P-USa" firstAttribute="top" secondItem="Y7P-V9-6em" secondAttribute="bottom" constant="17" id="BDY-aE-qnp"/>
                             <constraint firstItem="MH7-ib-rEi" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DQR-HV-rFp"/>
+                            <constraint firstItem="7kh-4P-USa" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="M6p-i6-X2A"/>
+                            <constraint firstItem="AeD-WO-Yox" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="10" id="R2u-vV-HCg"/>
+                            <constraint firstItem="H74-mW-E1w" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="20" id="Rbp-0D-rzL"/>
+                            <constraint firstItem="AeD-WO-Yox" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="40" id="T0c-RS-VJZ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="H74-mW-E1w" secondAttribute="trailing" constant="20" id="VLZ-DM-iDQ"/>
                             <constraint firstItem="MH7-ib-rEi" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="XNh-4G-0ux"/>
+                            <constraint firstItem="AeD-WO-Yox" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="aNd-TK-lE0"/>
+                            <constraint firstItem="H74-mW-E1w" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="30" id="aj4-xO-wYl"/>
                         </constraints>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
                         <outlet property="collectionView" destination="AeD-WO-Yox" id="z0J-gN-yA4"/>
+                        <outlet property="countDown" destination="H74-mW-E1w" id="nsE-wT-OLl"/>
                         <outlet property="previewView" destination="MH7-ib-rEi" id="JD6-9Q-yXa"/>
                         <outlet property="recordButton" destination="Y7P-V9-6em" id="CAe-3O-Use"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="507"/>
+            <point key="canvasLocation" x="177" y="552"/>
         </scene>
     </scenes>
 </document>
