@@ -30,7 +30,6 @@
                                 <state key="normal" title="Record"/>
                                 <connections>
                                     <action selector="pressRecordButton:" destination="BYZ-38-t0r" eventType="touchDown" id="l6A-pM-T2c"/>
-                                    <action selector="recordButtionAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iVq-di-rch"/>
                                     <action selector="releaseRecordButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yvk-B8-Bfo"/>
                                 </connections>
                             </button>
@@ -73,6 +72,13 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Fqw-zO-Yve"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kh-4P-USa">
+                                <rect key="frame" x="137" y="506" width="45" height="30"/>
+                                <state key="normal" title="export"/>
+                                <connections>
+                                    <action selector="exportButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Io9-ze-3ZJ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
