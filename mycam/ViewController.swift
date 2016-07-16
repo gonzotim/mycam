@@ -33,6 +33,33 @@ class Clip {
         }
     }
 
+    static func removeAtIndex(index: Int){
+        Clip.clips.removeAtIndex(index)
+    }
+
+    static func moveUpAtIndex(index: Int){
+        let clip = Clip.clips.removeAtIndex(index)
+        let updatedClips = Clip.clips.insert(clip, atIndex: index + 1)
+        //Clip.clips = updatedClips
+    }
+
+    static func moveDownAtIndex(index: Int){
+        let clip = Clip.clips.removeAtIndex(index)
+        let updatedClips = Clip.clips.insert(clip, atIndex: index - 1)
+    }
+
+}
+
+extension Array {
+    func shiftRight(var amount: Int = 1) -> [Element] {
+        assert(-count...count ~= amount, "Shift amount out of bounds")
+        if amount < 0 { amount += count }  // this needs to be >= 0
+        return Array(self[amount ..< count] + self[0 ..< amount])
+    }
+
+    mutating func shiftRightInPlace(amount: Int = 1) {
+        self = shiftRight(amount)
+    }
 }
 
 class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
@@ -271,9 +298,37 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, UI
     }
 
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let alertController = UIAlertController(title: "iOScreator", message:
-            "Hello, world!", preferredStyle: UIAlertControllerStyle.Alert)
-        alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+        let alertController = UIAlertController(title: "Edit your clip", message:
+            nil, preferredStyle: .ActionSheet)
+
+        var remove: UIAlertAction = UIAlertAction(title: "Remove segment", style: .Default, handler: {(action: UIAlertAction) -> Void in
+            Clip.removeAtIndex(indexPath.row)
+            collectionView.reloadData()
+        })
+        alertController.addAction(remove)
+
+        if indexPath.row != 0 {
+            var moveUp: UIAlertAction = UIAlertAction(title: "Move segment left", style: .Default, handler: {(action: UIAlertAction) -> Void in
+                collectionView.reloadData()
+                Clip.moveDownAtIndex(indexPath.row)
+            })
+            alertController.addAction(moveUp)
+
+        }
+
+        if indexPath.row != (Clip.clips.count - 1) {
+            var moveDown: UIAlertAction = UIAlertAction(title: "Move segment right", style: .Default, handler: {(action: UIAlertAction) -> Void in
+                Clip.moveUpAtIndex(indexPath.row)
+                collectionView.reloadData()
+            })
+            alertController.addAction(moveDown)
+        }
+
+        var cancel: UIAlertAction = UIAlertAction(title: "Cancel", style: .Default, handler: {(action: UIAlertAction) -> Void in
+
+        })
+        alertController.addAction(cancel)
+
         self.presentViewController(alertController, animated: true, completion: nil)
     }
 
